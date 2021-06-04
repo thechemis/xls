@@ -35,6 +35,22 @@ func (r *Row) Col(i int) string {
 	return ""
 }
 
+func (r *Row) ColAll(i int) (string, []string) {
+	serial := uint16(i)
+	if ch, ok := r.cols[serial]; ok {
+		strs := ch.String(r.wb)
+		return strs[0], strs
+	} else {
+		for _, v := range r.cols {
+			if v.FirstCol() <= serial && v.LastCol() >= serial {
+				strs := v.String(r.wb)
+				return strs[serial-v.FirstCol()], strs
+			}
+		}
+	}
+	return "", nil
+}
+
 //ColExact Get the Nth Col from the Row, if has not, return nil.
 //For merged cells value is returned for first cell only
 func (r *Row) ColExact(i int) string {
